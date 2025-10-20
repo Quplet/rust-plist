@@ -133,6 +133,7 @@ impl Error {
         }
     }
 
+    /// Returns a reference to the underlying [`ErrorKind`] for this error.
     pub fn kind(&self) -> &ErrorKind {
         &self.inner.kind
     }
