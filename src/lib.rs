@@ -95,6 +95,7 @@ pub use data::Data;
 pub use date::{Date, InvalidXmlDate};
 pub use dictionary::Dictionary;
 pub use error::Error;
+pub use error::ErrorKind;
 pub use integer::Integer;
 pub use stream::XmlWriteOptions;
 pub use uid::Uid;
