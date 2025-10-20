@@ -1,6 +1,6 @@
-use std::{error, fmt, io};
-use quick_xml::escape::EscapeError;
 use quick_xml::encoding::EncodingError;
+use quick_xml::escape::EscapeError;
+use std::{error, fmt, io};
 
 #[cfg(feature = "serde")]
 use crate::stream::Event;
@@ -19,7 +19,7 @@ pub(crate) struct ErrorImpl {
 }
 
 #[derive(Debug)]
-pub(crate) enum ErrorKind {
+pub enum ErrorKind {
     UnexpectedEof,
     UnexpectedEndOfEventStream,
     UnexpectedEventType {
@@ -86,7 +86,7 @@ pub(crate) enum ErrorKind {
 pub(crate) struct FilePosition(pub(crate) u64);
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-pub(crate) enum EventKind {
+pub enum EventKind {
     StartArray,
     StartDictionary,
     EndCollection,
@@ -132,6 +132,10 @@ impl Error {
             Err(self)
         }
     }
+
+    pub fn kind(&self) -> &ErrorKind {
+        &self.inner.kind
+    }
 }
 
 impl error::Error for Error {
@@ -166,11 +170,11 @@ impl From<InvalidXmlDate> for Error {
 }
 
 impl ErrorKind {
-    pub fn with_byte_offset(self, offset: u64) -> Error {
+    pub(crate) fn with_byte_offset(self, offset: u64) -> Error {
         self.with_position(FilePosition(offset))
     }
 
-    pub fn with_position(self, pos: FilePosition) -> Error {
+    pub(crate) fn with_position(self, pos: FilePosition) -> Error {
         Error {
             inner: Box::new(ErrorImpl {
                 kind: self,
@@ -179,7 +183,7 @@ impl ErrorKind {
         }
     }
 
-    pub fn without_position(self) -> Error {
+    pub(crate) fn without_position(self) -> Error {
         Error {
             inner: Box::new(ErrorImpl {
                 kind: self,
